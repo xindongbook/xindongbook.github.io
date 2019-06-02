@@ -6,7 +6,7 @@
   <meta name="author" content="新栋BOOK">
   
   
-  <title>新栋BOOK</title>
+  <title>关于 | 新栋BOOK</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -47,7 +47,7 @@
     author: "新栋BOOK",
     share: {"wechat":true},
     mathjax: true,
-    page_type: "",
+    page_type: "about",
     root: "/"
   };
 </script>
@@ -132,45 +132,41 @@
 </nav>
 <div id="site-process"></div>
     <main>
-      <div class="home">
+      
+  <div class="about">
+  <h1 class="passage-title">
+    
+      关于我
+    
+  </h1>
+  <article class="passage-article">
+    <blockquote>
+<p>目前就职于京东，平时喜欢写文字，分享文字。个人著作《架构修炼之道》，添加我的微信号：wangxindong2015，免费技术答疑、职场解惑。</p>
+</blockquote>
+
+  </article>
+  <aside class="table-content" id="site-toc">
+  <div class="table-content-title">
+    <i class="fa fa-arrow-right fa-lg" id="site-toc-hide-btn"></i>
+    <span>目录</span>
+  </div>
+  <div class="table-content-main">
+    
+  </div>
+</aside>
+</div>
+
+    </main>
+    
+      
+<div class="site-comment-contanier" data-plateform="leancloud">
   
-    <div class="home-article-wrapper clearfix">
-      <div class="home-article" data-cover="false">
-        <div class="home-article-inner" data-cover="false">
-          <div class="passage-meta">
-            <span>
-              <i class="fa fa-calendar"></i>2019-06-01
-            </span>
-            
-              <span>
-                | <a href="/categories/JAVA基础/"><i class="fa fa-bookmark"></i>JAVA基础</a>
-              </span>
-            
-            
-              <span>
-                | <i class="fa fa-unlock-alt"></i>UNLOCK
-              </span>
-            
-          </div>
-          <h1 class="home-article-title">
-            <a href="/passages/我是一个JAVA线程，我有话要说/">我是一个JAVA线程，我有话要说</a>
-          </h1>
-          <div class="home-article-content passage-article">
-            
-              <p>我是一个JAVA线程，你们经常会用到我，也有时候会对我感到头儿疼，比如当并发编程遇到问题的时候，那么我今天来跟大家聊下，我是一个JAVA线程。</p>
-            
-          </div>
-          <a class="home-article-read" href="/passages/我是一个JAVA线程，我有话要说/">
-            READ MORE >>>
-          </a>
-          
-        </div>
-        
-      </div>
-    </div>
+    <p id="site-comment-info">
+      <i class="fa fa-spinner fa-spin"></i> 评论加载中
+    </p>
+    <div id="site-comment"></div>
   
 </div>
-    </main>
     
     <div class="site-footer-wrapper">
   <footer class="site-footer">
@@ -223,11 +219,11 @@
     </a>
   </div>
   <div class="bottom-bar-right">
-    <a href="javascript:void(0);" data-enable="false" id="site-toc-show-btn">
+    <a href="javascript:void(0);" data-enable="true" id="site-toc-show-btn">
       <i class="fa fa-bars"></i>
     </a>
     
-      <a href="javascript:void(0);" data-enable="false">
+      <a href="#site-comment" data-enable="true">
         <i class="fa fa-commenting"></i>
       </a>
     

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+  
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta name="author" content="新栋BOOK">
+  
+  
+  <title>我是一个JAVA线程，我有话要说 | 新栋BOOK</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="JAVA基础,">
+  
+
+  
+  <meta name="description" content="我是一个JAVA线程，你们经常会用到我，也有时候会对我感到头儿疼，比如当并发编程遇到问题的时候，那么我今天来跟大家聊下，我是一个JAVA线程。">
+
+  
+
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.1/dist/av-min.js" async></script>
+  
+
+  
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+  
+
+  
+    <script src="//unpkg.com/valine/dist/Valine.min.js" async></script>
+  
+
+  
+
+  <script>
+  // theme-ad's config script
+  // it can be used in every script
+  
+  window.AD_CONFIG = {
+    leancloud: {"appid":"Hrs49OTx078j1GaE7nRweQgT-gzGzoHsz","appkey":"JQTFBrrs59FWht5wowJOO3Eu","comment":true,"count":true},
+    welcome: {"enable":true,"interval":30},
+    start_time: "2019-06-01",
+    passwords: ["efe07af7441da2b69c4a41e42e73be4db47f66010a56900788a458354a7373ec", ],
+    is_post: true,
+    lock: false,
+    author: "新栋BOOK",
+    share: {"wechat":true},
+    mathjax: true,
+    page_type: "",
+    root: "/"
+  };
+</script>
+
+  <script src="/vendor/sha256.min.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/index.js"></script>
+<script src="/vendor/qrcode.min.js"></script>
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/index.css">
+<link rel="stylesheet" href="/styles/components/highlight/highlight.css">
+
+  
+</head>
+  <body>
+    <header class="site-header">
+  <div class="site-header-brand">
+    
+      <span class="site-header-brand-title">
+        <a href="/">新栋BOOK</a>
+      </span>
+    
+    
+      <span class="site-header-brand-motto"> | 经历过才知道有多美</span>
+    
+  </div>
+  <div class="site-header-right">
+    <nav class="site-header-navigation">
+      
+        <a href="/" target="_self">首页</a>
+      
+        <a href="/archives/" target="_self">归档</a>
+      
+        <a href="/about/" target="_self">关于</a>
+      
+    </nav>
+    <div class="site-header-btn">
+      
+      <a href="javascript:void(0);" id="site-search">
+        <i class="fa fa-search"></i>
+      </a>
+      <a href="javascript:void(0);" id="site-nav-btn">
+        <i class="fa fa-ellipsis-v"></i>
+      </a>
+    </div>
+  </div>
+</header>
+<nav class="table-content" id="site-nav">
+  <div class="table-content-title">
+    <span>导航</span>
+  </div>
+  <div class="table-content-main">
+    <ol class="toc">
+      
+        <li class="toc-item">
+          <a href="/" target="_self">
+            首页
+          </a>
+        </li>
+      
+        <li class="toc-item">
+          <a href="/archives/" target="_self">
+            归档
+          </a>
+        </li>
+      
+        <li class="toc-item">
+          <a href="/about/" target="_self">
+            关于
+          </a>
+        </li>
+      
+    </ol>
+  </div>
+</nav>
+<div id="site-process"></div>
+    <main>
+      
+  <div class="passage">
+  <div class="passage-meta">
+    <span>
+      <i class="fa fa-calendar"></i>2019-06-01
+    </span>
+    
+      <span>
+        | <a href="/categories/JAVA基础/"><i class="fa fa-bookmark"></i>JAVA基础</a>
+      </span>
+    
+    
+      <span>
+        | <i class="fa fa-unlock-alt"></i>UNLOCK
+      </span>
+    
+  </div>
+  <h1 class="passage-title">
+    我是一个JAVA线程，我有话要说
+  </h1>
+  
+  <article class="passage-article">
+    <p>我可以通过Thread类new一个出来，也可以通过Runnable实现出来。另外我跟各个系统平台还有很大关系，<strong>我虽然诞生自JVM的虚拟环境，但运行时的程序本身是用C语言之类的开发语言编写的本机程序，因此我还占用了本机资源，比如本机内存，这点可以观察Thread类里面有很多的native方法就能明白我确实不能像其他类那样”潇洒”</strong>，因为这意味着我所拥有的这些方法往往是没有使用或者没有办法来使用跟平台无关的手段来实现。另外多啰嗦一句，有时候需要本机内存的操作随jvm的实现不同也会有差别，但有些操作很常见，比如启动我这个线程的时候，加载类的时候，还有网络或者文件I/O操作等等，这些操作都需要本机内存的参与，这得益于JNI的支持使得JAVA运行时能够很方便的调用类似C语言编写的本机代码。所以说到这里的话，因操作系统不同因而实现不同，也就不仅仅是我自己不那么”潇洒”了，当然多数基本的类型还是都自由自在的畅游在JVM这个环境下的。</p>
+<p>我是微观的产物，可以被操作系统来回切换，当然切换的过程会有损耗，因为你那么的来回 “摆弄” 我，总要付出点 “体力” 吧。现在都讲面向对象编程，主要的思想是对现实世界的抽象，把数据和行为都看成是对象的一部分。<strong>但我从来没有见过，现实世界中有哪一样工作会在进行期间不停的中断和切换。但是我能，而且我即使被频繁的来回切换，也丝毫不会感到 “头晕” 从而找不到 “北”。在我被切换回来的时候，我能很清楚的定位到我原先正在执行的位置，因为jvm给我安排了程序计数器这个”管家”。</strong>从这点也说明，我并不是孤独的，虚拟机栈和程序计数器的生命周期都跟我是一样的，当我不存在的时候他们也随着消失了，因此人们常常说他们是我私有的。哦，对了，局部变量就是放在这个虚拟机栈中的，有时候大家也称为线程栈，就因为这些资源是我私有的，没有人跟我 “抢”，我便能够很安全的使用它们，专业点说就是线程安全的。但同时JVM又很关照我们，JVM给我和我的同伴们分配了可以共享的空间比如方法区、JAVA堆，伴随着幸福来临的同时也增加了竞争这些共享空间的烦恼，为了应对操作系统交给我们的任务，我和我的同伴之间不得不去争抢打开这个空间的 “锁”。不过我们又再一次幸运，JVM继续特殊照顾我们，在JAVA堆中又给我们分配了可供我们 “每个人” 独享的缓冲区(Thread Local Allocation Buffer，TLAB)。其实面对竞争也不用太担心，随着JAVA这么多年的成熟发展，已经有高级的工具类在帮助大家使用我们了，比如Executor Framework、并发集合(Concurrent Collection)、同步器(Synchronizer)，大家在日常工作中 可以直接利用这些工具来处理绝大多数下遇到的竞争所带来的并发问题。</p>
+<p>当我的线程同伴越来越多的时候，我们之间是如何协调合作的呢，操作系统交给我们了两种方法，一种是让我们自己管理自己，当我把自己的工作完成之后，我使用CPU的时间到了，我便会主动通知其它的线程同伴可以开始使用CPU来工作了，就跟接力赛似的”一棒一棒”的传下去，这种方式下，我们之间没有竞争，当然也不会有很多程序员所抱怨的同步问题了，大家都生活在一个和谐的社会，这种方式专业术语叫作 “协同式调度”；在这种方式下如果有的同伴过于”贪婪”或者工作效率低下，则会一直把持着CPU的资源不放开，就会直接导致上层程序阻塞了，鉴于这种可能情况的发生，操作系统站出来主动承担责任来解决这一问题，重新制定了规则，加入了市场竞争，系统来为我们分配执行时间，我和我的同伴之间的”交班”将不再有我们自己决定了，系统来控制着我们使用CPU资源的时间片，当有一个优先级比我高的线程出现的时候，系统就很可能会允许把我的执行权抢走。这种方式也有一个专业术语叫做 “抢占式调度”。<strong>但这也不是绝对的，JVM环境里面为我们定义了10个级别，在上文的地方我也告诉大家了我的诞生跟本机操作系统有直接关系，我实际是通过映射到系统的原生线程上来实现的，所以呢这个级别的调度跟操作系统有很大关系，有的操作系统的线程级别多余10个，有的又少于10个，比如windows便只有7个，当我这个JAVA线程运行在少于10个的操作系统上的时候，我的级别中就不得不被挤掉几个，从而有级别相同的情况发生了。所以依靠我自身的线程级别就变的不太靠谱了。</strong></p>
+<p>说了这么多，应该如何使用我呢，<strong>我是不建议你们直接使用我的，因为比如当你们直接使用new Thread的时候，我其实既充当了工作单元，又是执行机制。当做策略的和执行任务的集成在一起，就会大大失去灵活性。那么推荐大家使用一些线程框架，比如在Executor Framework在这个框架中工作单元和执行机制便是分开的。</strong>其实也不建议大家直接使用这个框架里面的Executors，在访问量不是太大，负载比较小的服务器上面可以直接使用Executors.newCachedThreadPool，但是对于访问量大，负载大的服务应用就不推荐使用了。newCachedThreadPool这种方式没有使用队列，如果线程不够，就创建一个新的线程，极有可能导致CPU全部被占用，那么到底一个服务器可以跑多少个线程呢，大家也可以参考《架构修炼之道》第5章中的内容。 为了最大限度的控制线程池， 就直接使用ThreadPoolExecutor类。大家一定要充分利用好我啊，随着计算机的运算能力越来越强大，就想着让计算机尽可能的去同时做好多个事情，时常有好多个程序员在千方百计的设法 “压榨” 计算机的运算能力，而我就是这个被”压榨”过程中不能不被考虑的一个因素。</p>
+<p>reference：</p>
+<p>《深入理解计算机系统》</p>
+<p>《深入理解JAVA虚拟机》</p>
+<p>《Effective Java》</p>
+  </article>
+  <aside class="table-content" id="site-toc">
+  <div class="table-content-title">
+    <i class="fa fa-arrow-right fa-lg" id="site-toc-hide-btn"></i>
+    <span>目录</span>
+  </div>
+  <div class="table-content-main">
+    
+  </div>
+</aside>
+  
+    <aside class="passage-copyright">
+      <div>本文作者: 新栋BOOK</div>
+      
+        <div>
+          原文链接: 
+          <a href target="_blank">http://www.wangxindong.com/passages/我是一个JAVA线程，我有话要说/</a>
+        </div>
+      
+      <div>
+        版权声明: 本博客所有文章除特别声明外, 均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议. 转载请注明出处!
+      </div>
+    </aside>
+  
+  
+</div>
+
+    </main>
+    
+      
+<div class="site-comment-contanier" data-plateform="leancloud">
+  
+    <p id="site-comment-info">
+      <i class="fa fa-spinner fa-spin"></i> 评论加载中
+    </p>
+    <div id="site-comment"></div>
+  
+</div>
+    
+    <div class="site-footer-wrapper">
+  <footer class="site-footer">
+    
+    <div class="site-footer-info">
+      <i class="fa fa-clock-o"></i> 本站已稳定运行<span id="site-time"></span>
+    </div>
+    
+      <div class="site-footer-info">
+        <i class="fa fa-paw"></i> 您是本站第 <span id="site-count"></span> 位访客
+      </div>
+    
+    
+    <div class="site-footer-info">
+      <i class="fa fa-copyright"></i> 
+      2019 <a href="https://github.com/dongyuanxin/theme-ad/" target="_blank">Theme-AD</a>.
+      Created by <a href="https://godbmw.com/" target="_blank">GodBMW</a>.
+      All rights reserved.
+    </div>
+  </footer>
+</div>
+    <div id="site-layer" style="display:none;">
+  <div class="site-layer-content">
+    <div class="site-layer-header">
+      <span class="site-layer-header-title" id="site-layer-title"></span>
+      <i class="fa fa-close" id="site-layer-close"></i>
+    </div>
+    <div class="site-layer-body" id="site-layer-container">
+      <div class="site-layer-input" id="site-layer-search" style="display: none;">
+        <div class="site-layer-input-choose">
+          <a href="javascript:void(0);" title="Change Search Engine">Google</a>
+        </div>
+        <input type="text">
+        <i class="fa fa-search"></i>
+      </div>
+      
+      <div id="site-layer-welcome" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+    
+
+<div class="bottom-bar">
+  <div class="bottom-bar-left">
+    <a href="javascript:void(0);" data-enable="false">
+      <i class="fa fa-arrow-left"></i>
+    </a>
+    <a href="javascript:void(0);" data-enable="false">
+      <i class="fa fa-arrow-right"></i>
+    </a>
+  </div>
+  <div class="bottom-bar-right">
+    <a href="javascript:void(0);" data-enable="true" id="site-toc-show-btn">
+      <i class="fa fa-bars"></i>
+    </a>
+    
+      <a href="#site-comment" data-enable="true">
+        <i class="fa fa-commenting"></i>
+      </a>
+    
+    <a href="javascript:void(0);" id="site-toggle-share-btn">
+      <i class="fa fa-share-alt"></i>
+    </a>
+    
+    <a href="javascript:void(0);" id="back-top-btn">
+      <i class="fa fa-chevron-up"></i>
+    </a>
+  </div>
+</div>
+    <div id="share-btn">
+  
+  
+  
+  
+  
+    <a id="share-btn-wechat" href="javascript:void(0);" target="_blank">
+      <i class="fa fa-wechat"></i>
+    </a>
+  
+</div>
+    
+
+
+
+
+
+    
+  </body>
+</html>
