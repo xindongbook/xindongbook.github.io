@@ -34,7 +34,8 @@
         query.equalTo('url', url);
         query.count()
           .then(num => {
-            infoDOM.innerHTML = `共${num}条评论`;
+            //infoDOM.innerHTML = `共${num}条评论`;
+            infoDOM.innerHTML = `评论`;
             running = false;
           });
       }, ts);
@@ -82,7 +83,7 @@
       query
         .count()
         .then(
-          res => resolve(res + 1), 
+          res => resolve(res + 1),
           error => {
             console.log('Error occurs when count in leancloud.js:', error.message);
             resolve(0);
@@ -96,19 +97,19 @@
     const layer = document.querySelector('#site-layer'),
       welcomeDOM = document.querySelector('#site-layer-welcome'),
       title = document.querySelector('#site-layer-title');
-  
+
     let visitTime = parseInt(atob(window.localStorage.getItem('visit_time')), 10),
       now = Date.now(),
       offsetDays = 0;
-    
+
     window.localStorage.setItem('visit_time', btoa(now.toString()));
-  
+
     if(layer.style.display !== 'none' || !totalVisit) {
       return;
     }
 
     offsetDays = Math.ceil((now - visitTime) / day);
-  
+
     if(isNaN(offsetDays)) {
       layer.style.display = 'block';
       title.innerHTML = '欢迎到来';
@@ -122,7 +123,7 @@
     } else {
       return;
     }
-  
+
     window.AD_CONFIG.layer.add(() => {
       title.innerHTML = '';
       welcomeDOM.innerHTML = '';
