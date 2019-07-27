@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+  
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta name="author" content="新栋BOOK">
+  
+  
+  <title>从微服务到微服务测试 | 新栋BOOK</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="架构,">
+  
+
+  
+  <meta name="description" content="从微服务到微服务测试，回顾了微服务的定义，其中并没有告诉我们大小。而且我们也不用关注大小，微服务的重点在于分解系统的能力。本文从微服务的基础六边形架构开始讲述一直到微服务如何测试。">
+
+  
+
+  
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.11.1/dist/av-min.js" async></script>
+  
+
+  
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+  
+
+  
+    <script src="//unpkg.com/valine/dist/Valine.min.js" async></script>
+  
+
+  
+
+  <script>
+  // theme-ad's config script
+  // it can be used in every script
+  
+  window.AD_CONFIG = {
+    leancloud: {"appid":"Hrs49OTx078j1GaE7nRweQgT-gzGzoHsz","appkey":"JQTFBrrs59FWht5wowJOO3Eu","comment":true,"count":true},
+    welcome: {"enable":true,"interval":30},
+    start_time: "2019-06-01",
+    passwords: [],
+    is_post: true,
+    lock: false,
+    author: "新栋BOOK",
+    share: {"wechat":true},
+    mathjax: true,
+    page_type: "",
+    root: "/"
+  };
+</script>
+
+  <script src="/vendor/sha256.min.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/index.js"></script>
+<script src="/vendor/qrcode.min.js"></script>
+
+  
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/images/touch-icon.png">
+  
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/index.css">
+<link rel="stylesheet" href="/styles/components/highlight/highlight.css">
+
+  
+</head>
+  <body>
+    <header class="site-header">
+  <div class="site-header-brand">
+    
+      <span class="site-header-brand-title">
+        <a href="/">新栋BOOK</a>
+      </span>
+    
+    
+      <span class="site-header-brand-motto"> | 经历过才知道有多美</span>
+    
+  </div>
+  <div class="site-header-right">
+    <nav class="site-header-navigation">
+      
+        <a href="/" target="_self">首页</a>
+      
+        <a href="/archives/" target="_self">归档</a>
+      
+        <a href="/about/" target="_self">关于</a>
+      
+    </nav>
+    <div class="site-header-btn">
+      
+        <a href="https://github.com/xindongbook/xindongbook.github.io" target="_blank" id="site-github">
+          <i class="fa fa-github-alt"></i>
+        </a>
+      
+      <a href="javascript:void(0);" id="site-search">
+        <i class="fa fa-search"></i>
+      </a>
+      <a href="javascript:void(0);" id="site-nav-btn">
+        <i class="fa fa-ellipsis-v"></i>
+      </a>
+    </div>
+  </div>
+</header>
+<nav class="table-content" id="site-nav">
+  <div class="table-content-title">
+    <span>导航</span>
+  </div>
+  <div class="table-content-main">
+    <ol class="toc">
+      
+        <li class="toc-item">
+          <a href="/" target="_self">
+            首页
+          </a>
+        </li>
+      
+        <li class="toc-item">
+          <a href="/archives/" target="_self">
+            归档
+          </a>
+        </li>
+      
+        <li class="toc-item">
+          <a href="/about/" target="_self">
+            关于
+          </a>
+        </li>
+      
+    </ol>
+  </div>
+</nav>
+<div id="site-process"></div>
+    <main>
+      
+  <div class="passage">
+  <div class="passage-meta">
+    <span>
+      <i class="fa fa-calendar"></i>2019-07-27
+    </span>
+    
+      <span>
+        | <a href="/categories/架构/"><i class="fa fa-bookmark"></i>架构</a>
+      </span>
+    
+    
+      <span>
+        | <i class="fa fa-unlock-alt"></i>UNLOCK
+      </span>
+    
+  </div>
+  <h1 class="passage-title">
+    从微服务到微服务测试
+  </h1>
+  
+  <article class="passage-article">
+    <h3 id="微服务到底需要多“微”"><a href="#微服务到底需要多“微”" class="headerlink" title="微服务到底需要多“微”"></a>微服务到底需要多“微”</h3><p>如果要追溯微服务的定义，大家一般都会去看Martin Fowler在2014年发表的Microservices那篇文章。</p>
+<p><img src="/passages/2019/07/27/从微服务到微服务测试/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%8F%8F%E8%BF%B0.png" alt="微服务描述"></p>
+<p> 一共7个特点。微服务中的”微”时常给我们潜意识里面下了一个定义，似乎是有一个尺寸，大小，<strong>很明显上面7个特点里面没有涉及大小。</strong></p>
+<p>微服务侧重点在于拆分能力，拆分的原则我们也都比较熟悉，包括单一职责原则，改变一个类应该有且只有一个理由。还有闭包原则，在包中包含的所有类应该是对同类的变化的一个集合，也就是说，如果对包做修改，需要调整的类应该都在这个包之内。</p>
+<p><strong>因此，微服务不应该太在意大小，而应该关注能力是否拆的清楚，利索。</strong></p>
+<h3 id="六边形架构"><a href="#六边形架构" class="headerlink" title="六边形架构"></a>六边形架构</h3><p>如果按照架构的风格来分的话，有分层架构，六边形架构，微服务架构，实际上这也是架构的演变过程。</p>
+<p><strong>六边形架构，这个数字并不是一个固值，实际是指 “多” 边，多维的意思</strong>。在分层架构风格里的依赖是一维的，上下依赖或者左右依赖。</p>
+<p>随着业务的体量、规模逐渐变大，分层架构已逐渐不能够支撑业务的高速发展。系统架构就要寻求多边发展，于是就有了类似六边形这样形象的架构描述。</p>
+<p> <img src="/passages/2019/07/27/从微服务到微服务测试/%E5%85%AD%E8%BE%B9%E5%BD%A2%E6%9E%B6%E6%9E%84.png" alt="六边形架构"></p>
+<p>想想我们一般都需要哪些系统请求和响应的需求吧，我们需要使用一个类似controller的组件接收用户的请求，我们需要接收并消费其它系统生产的消息，我们也需要向其它系统发起若干RPC调用，还有可能需要生产消息供别的系统来消费。</p>
+<p><strong>六边形架构的主要组成部分是端口和适配器，一个服务一般包括接收请求或者接收消息和发出请求或者生产消息，也就是有入和出，端口和适配器成对匹配，因此呢也就有入端口和入适配器，出端口和出适配器。</strong></p>
+<p>入适配器调用入端口，出适配器实现出端口。对应的我们的应用系统实例上，入适配器有controller，入端口有定义了服务可供外部调用的API。出端口有各种数据库的接口比如MySQL、oracle等等，出适配器有实现了这些数据库接口的DAO类对象。这就是为什么说六边形架构是微服务的基础的原因。</p>
+<h3 id="架构、组织、流程"><a href="#架构、组织、流程" class="headerlink" title="架构、组织、流程"></a>架构、组织、流程</h3><p>我们已经知道对于大型复杂的应用程序适合采用微服务的架构。根据康威定律的概述系统架构往往反映了组织架构的描述。<strong>在《人月神话》中有描述，一个团队组织的沟通成本会随着团队成员的增加程O(N的2次方)的速度上升。</strong></p>
+<p>后面也会提到开发团队应该采用敏捷团队的形式去组织，那么敏捷里面我们都知道有五个重要的会议，每日站会、需求梳理会、成果演示会、迭代回顾会、迭代计划会，试想如果有20多人的团队一起每次参加这五个会议，会是怎样的一个结果，所以我们需要一个小而自治的团队。<strong>这样的团队规模一般是8-12人。</strong></p>
+<p>再来说下自治，这点非常重要，自治的团队必须可以独自开发、部署、扩展已有的应用。所以紧接着就需要一套软件开发和交付的流程。比如在京东内部有自己的编译、部署和发布平台，上线全程自动化，每天可以多次发布。</p>
+<p> ![组织 流程 架构](./2019-07-27-从微服务到微服务测试/组织 流程 架构.png)</p>
+<p>因为持续交付的一个关键特征便是软件总是随时可以交付的。这在微服务之前的架构中，比如庞大的单体应用架构中是不可能完成的。<strong>微服务架构、跨功能性组织和交付流程这三者几乎是同一时间发展起来的，通过百度搜索指数也可以看出这样的关系。</strong></p>
+<p>下面是微服务和Devops搜索的百度指数</p>
+<p><img src="/passages/2019/07/27/从微服务到微服务测试/%E7%99%BE%E5%BA%A6%E6%8C%87%E6%95%B0.png" alt="百度指数"></p>
+<h3 id="测试象限"><a href="#测试象限" class="headerlink" title="测试象限"></a>测试象限</h3><p>系统采用微服务架构之后，为测试打下了一个好的测试基础，因为系统按照能力进行了拆分。但测试之前我们也要清楚测试的分类，恰好测试象限从两个维度对帮我们对测试进行了分类梳理。</p>
+<p><strong>这两个维度分别是，测试是面向业务还是面向技术，测试的目标是协助开发还是寻找产品缺陷。</strong>两个维度四个象限，举例来讲如图所示处于第一象限中的单元测试、组件测试等则处于协助研发和面向技术这两种维度方向的交集，探索性测试、易用性测试和场景测试则处于面向业务寻找产品缺陷这两种维度方向的交集。</p>
+<p> <img src="/passages/2019/07/27/从微服务到微服务测试/%E6%B5%8B%E8%AF%95%E8%B1%A1%E9%99%90.png" alt="测试象限"></p>
+<p>这四个象限中处于第一象限的测试内容应该充分利用自动化测试，而第三象限中的测试内容则需要我们手动测试。测试象限分别从两个维度对测试进行了分类。</p>
+<h3 id="测试金字塔"><a href="#测试金字塔" class="headerlink" title="测试金字塔"></a>测试金字塔</h3><p><strong>测试象限用来帮助我们对测试进行分类，那么测试金字塔则可以指导我们的测试工作，可以作为我们针对每种测试类型需要编写的测试用例数量的指南。</strong></p>
+<p>如下图所示，测试金字塔如果细粒度分的话，从下往上依次是单元测试、集成测试、组件测试、端到端测试。另外还有一种粗放型的划分，从下往上依次是单元测试、业务逻辑测试、端到端的测试。</p>
+<p>第一种细粒度的划分实际上是把业务逻辑测试的再分。在单元测试的时候，我们需要编写大量的测试用例来测试业务逻辑的基本正确性，在端到端测试的时候测试用例的数量会变得很少，侧重于应用程序的验收测试，具体什么是端到端的测试呢，我们常见的UI测试、REST API的测试都属于端到端的测试。</p>
+<p> <img src="/passages/2019/07/27/从微服务到微服务测试/%E6%B5%8B%E8%AF%95%E9%87%91%E5%AD%97%E5%A1%94.png" alt="测试金字塔"></p>
+<p>因此测试金字塔指导我们测试工作的关键思想是，在金字塔从下往上移动时，应该编写的测试用例越来越少。</p>
+<h3 id="消费者驱动契约测试"><a href="#消费者驱动契约测试" class="headerlink" title="消费者驱动契约测试"></a>消费者驱动契约测试</h3><p><strong>契约是一种约定，是消费者(调用者)和提供者直之间交互的约定，消费者来提出所需要的请求和响应。</strong></p>
+<p>因此这份测试契约最初是消费者或者调用者来写，描述好契约之后提交给接口提供者，一般这个契约是放在git上来管理，接口提供者获取到契约，利用一些契约测试框架比如spring cloud contract来生成测试代码。</p>
+<p>接口提供者利用这些测试代码来做测试以便验证这些契约，测试通过之后把代码打成JAR文件提交到MAVEN私服管理库，发布契约，最后消费者从MAVEN私服管理库下载获取到JAR包，开始测试接口的可用性。</p>
+<h5 id="以后消费者都通过该方式从管理库获取发布的契约。这是整个消费者驱动契约测试的流程。"><a href="#以后消费者都通过该方式从管理库获取发布的契约。这是整个消费者驱动契约测试的流程。" class="headerlink" title="以后消费者都通过该方式从管理库获取发布的契约。这是整个消费者驱动契约测试的流程。"></a>以后消费者都通过该方式从管理库获取发布的契约。这是整个消费者驱动契约测试的流程。</h5><p> <img src="/passages/2019/07/27/从微服务到微服务测试/%E6%B5%8B%E8%AF%95%E9%87%91%E5%AD%97%E5%A1%94.png" alt="测试金字塔"></p>
+<p>消费者契约测试是针对提供者的集成测试，用于验证提供者的API是否符合消费者的预期，验证服务的客户端是否可以。不过要注意，契约测试不会彻底测试提供者的业务逻辑。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>我们从微服务到底需要多大，多小说起，本文给出了个人认为的答案，我们并不应该关心大小，而应该关心是否将系统的能力做出利索的拆分，另外我们一起认识了微服务的基础六边形架构，进而又提到组织、流程，通过搜索指数也可以印证它们是在同一时期出现，随后的时间内也是几乎保持热度一致。最后我们讲述了微服务的测试。</p>
+<p>reference</p>
+<h5 id="《企业应用架构模式》《人月神话》《微服务架构设计模式》"><a href="#《企业应用架构模式》《人月神话》《微服务架构设计模式》" class="headerlink" title="《企业应用架构模式》《人月神话》《微服务架构设计模式》"></a>《企业应用架构模式》《人月神话》《微服务架构设计模式》</h5>
+  </article>
+  <aside class="table-content" id="site-toc">
+  <div class="table-content-title">
+    <i class="fa fa-arrow-right fa-lg" id="site-toc-hide-btn"></i>
+    <span>目录</span>
+  </div>
+  <div class="table-content-main">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#微服务到底需要多“微”"><span class="toc-text">微服务到底需要多“微”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#六边形架构"><span class="toc-text">六边形架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#架构、组织、流程"><span class="toc-text">架构、组织、流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试象限"><span class="toc-text">测试象限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试金字塔"><span class="toc-text">测试金字塔</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消费者驱动契约测试"><span class="toc-text">消费者驱动契约测试</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#以后消费者都通过该方式从管理库获取发布的契约。这是整个消费者驱动契约测试的流程。"><span class="toc-text">以后消费者都通过该方式从管理库获取发布的契约。这是整个消费者驱动契约测试的流程。</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#《企业应用架构模式》《人月神话》《微服务架构设计模式》"><span class="toc-text">《企业应用架构模式》《人月神话》《微服务架构设计模式》</span></a></li></ol></li>
+  </div>
+</aside>
+  
+    <aside class="passage-copyright">
+      <div>本文作者: 新栋BOOK</div>
+      
+        <div>
+          原文链接: 
+          <a href target="_blank">http://www.wangxindong.com/passages/2019/07/27/从微服务到微服务测试/</a>
+        </div>
+      
+      <div>
+        版权声明: 本博客所有文章除特别声明外, 均采用 CC BY-NC-SA 4.0 许可协议. 转载请注明出处!
+      </div>
+    </aside>
+  
+  
+</div>
+
+    </main>
+    
+      
+<div class="site-comment-contanier" data-plateform="leancloud">
+  
+    <p id="site-comment-info">
+      <i class="fa fa-spinner fa-spin"></i> 评论加载中
+    </p>
+    <div id="site-comment"></div>
+  
+</div>
+    
+    <div class="site-footer-wrapper">
+  <footer class="site-footer">
+    
+    <div class="site-footer-info">
+      <i class="fa fa-clock-o"></i> 本站已稳定运行<span id="site-time"></span>
+    </div>
+    
+      <div class="site-footer-info">
+        <i class="fa fa-paw"></i> 您是本站第 <span id="site-count"></span> 位访客
+      </div>
+    
+    
+    <div class="site-footer-info">
+      <i class="fa fa-copyright"></i>
+      感谢 2019 <a href="https://github.com/dongyuanxin/theme-ad/" target="_blank">Theme-AD</a>.
+      Created by <a href="https://godbmw.com/" target="_blank">GodBMW</a>.
+      All rights reserved.
+    </div>
+  </footer>
+</div>
+    <div id="site-layer" style="display:none;">
+  <div class="site-layer-content">
+    <div class="site-layer-header">
+      <span class="site-layer-header-title" id="site-layer-title"></span>
+      <i class="fa fa-close" id="site-layer-close"></i>
+    </div>
+    <div class="site-layer-body" id="site-layer-container">
+      <div class="site-layer-input" id="site-layer-search" style="display: none;">
+        <div class="site-layer-input-choose">
+          <a href="javascript:void(0);" title="Change Search Engine">Google</a>
+        </div>
+        <input type="text">
+        <i class="fa fa-search"></i>
+      </div>
+      
+      <div id="site-layer-welcome" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+    
+
+<div class="bottom-bar">
+  <div class="bottom-bar-left">
+    <a href="javascript:void(0);" data-enable="false">
+      <i class="fa fa-arrow-left"></i>
+    </a>
+    <a href="/passages/2019/06/04/我的第6个京东618/" data-enable="true">
+      <i class="fa fa-arrow-right"></i>
+    </a>
+  </div>
+  <div class="bottom-bar-right">
+    <a href="javascript:void(0);" data-enable="true" id="site-toc-show-btn">
+      <i class="fa fa-bars"></i>
+    </a>
+    
+      <a href="#site-comment" data-enable="true">
+        <i class="fa fa-commenting"></i>
+      </a>
+    
+    <a href="javascript:void(0);" id="site-toggle-share-btn">
+      <i class="fa fa-share-alt"></i>
+    </a>
+    
+    <a href="javascript:void(0);" id="back-top-btn">
+      <i class="fa fa-chevron-up"></i>
+    </a>
+  </div>
+</div>
+    <div id="share-btn">
+  
+  
+  
+  
+  
+    <a id="share-btn-wechat" href="javascript:void(0);" target="_blank">
+      <i class="fa fa-wechat"></i>
+    </a>
+  
+</div>
+    
+
+
+  <script async>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+
+
+
+
+    
+  </body>
+</html>
